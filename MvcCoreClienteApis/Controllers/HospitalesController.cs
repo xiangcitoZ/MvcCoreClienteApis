@@ -20,6 +20,13 @@ namespace MvcCoreClienteApis.Controllers
             return View(hospitales);
         }
 
+        public async Task<IActionResult> Details(int idHospital)
+        {
+            Hospital hospital =
+                await this.service.FindHospital(idHospital);
+            return View(hospital);
+        }
+
 
         public IActionResult Index()
         {
@@ -29,5 +36,7 @@ namespace MvcCoreClienteApis.Controllers
         {
             return View();
         }
+
+       
     }
 }

@@ -1,21 +1,51 @@
 ﻿@section Scripts {
     <script>
+        var urlApi =
+            "https://apicorehospitales2023.azurewebsites.net/";
         $(document).ready(function () {
-            var urlApi =
-                "https://apicorehospitales2023.azurewebsites.net/api/hospitales";
+            var requestAll = "/api/hospitales";
             $.ajax({
-                url: urlApi,
+                url: urlApi + requestAll,
                 method: "GET",
                 success: function (data) {
-                    var html = "";
                     $.each(data, function (index, hospital) {
-                        html += "<tr>";
-                        html += "<td>" + hospital.nombre + "</td>";
-                        html += "<td>" + hospital.direccion + "</td>";
-                        html += "<td>" + hospital.telefono + "</td>";
-                        html += "<td>" + hospital.camas + "</td>";
-                        html += "</tr>";
-                        $("#tablahospital tbody").html(html);
+                        var fila = $("<tr>");
+                        var columna = $("<td>");
+                        columna.text(hospital.nombre);
+                        fila.append(columna);
+                        columna = $("<td>");
+                        columna.text(hospital.direccion);
+                        fila.append(columna);
+                        columna = $("<td>");
+                        columna.text(hospital.telefono);
+                        fila.append(columna);
+                        columna = $("<td>");
+                        columna.text(hospital.camas);
+                        fila.append(columna);
+                        columna = $("<td>");
+                        var boton = $("<button>");
+                        boton.text("Details");
+                        boton.addClass("btn btn-warning");
+                        boton.val(hospital.idHospital);
+                        columna.append(boton);
+                        fila.append(columna);
+                        boton.click(function () {
+                            var id = $(this).val();
+                            var request = "/api/hospitales/" + id;
+                            $.ajax({
+                                url: urlApi + request,
+                                method: "GET",
+                                success: function (data) {
+                                    var html = "<h1>" + data.nombre + "</h1>";
+                                    html += "<h2>" + data.direccion + "</h2>";
+                                    html += "<h2>" + data.telefono + "</h2>";
+                                    html += "<h2>" + data.camas + "</h2>";
+                                    $("#detalleshospital").html(html);
+                                }
+                            })
+                        });
+
+                        $("#tablahospital tbody").append(fila);
                     });
                 }
             })
@@ -30,7 +60,9 @@
             <th>Dirección</th>
             <th>Teléfono</th>
             <th>Camas</th>
+            <th></th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
+<div id="detalleshospital"></div>

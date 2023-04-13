@@ -10,9 +10,10 @@ namespace MvcCoreClienteApis.Services
         private MediaTypeWithQualityHeaderValue Header;
 
         private string UrlApi;
-        public ServiceHospital()
+        public ServiceHospital(IConfiguration configuration)
         {
-            this.UrlApi = "https://apicorehospitales2023xzx.azurewebsites.net/";
+            this.UrlApi =
+                configuration.GetValue<string>("ApiUrls:ApiHospitales");
             this.Header =
                 new MediaTypeWithQualityHeaderValue("application/json");
 
@@ -62,6 +63,41 @@ namespace MvcCoreClienteApis.Services
 
             }
         }
+
+
+        public async Task<Hospital> FindHospital(int idHospital)
+        {
         
+            using (HttpClient client = new HttpClient())
+            {
+                
+                string request = "/api/hospitales/"+ idHospital;
+
+                client.BaseAddress = new Uri(this.UrlApi);
+                
+                client.DefaultRequestHeaders.Clear();
+                
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                
+                HttpResponseMessage response =
+                    await client.GetAsync(request);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    
+                   Hospital data =
+                        await response.Content.ReadAsAsync<Hospital>();
+                   
+
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+        }
+
     }
 }
